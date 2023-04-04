@@ -1,8 +1,8 @@
 # Movies website
 
 Folder structure:
-- movies-api
-- movies-web: Frontend (NextJs)
+- movies-api: nodeJs
+- movies-web: React
 
 ## movies-api
 You can run the project in development mode with `yarn run dev`.
