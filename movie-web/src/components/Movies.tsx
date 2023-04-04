@@ -18,13 +18,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchMovies } from "../requests/requests";
 import { useQuery } from "react-query";
 
 const theme = createTheme();
 const Movies = () => {
   const [search, setSearch] = useState<string>("");
+  const [isCache, setCache] = useState<boolean | undefined>(undefined);
   const { isLoading, data, refetch } = useQuery(
     "movies",
     async () => fetchMovies(search),
@@ -32,6 +33,16 @@ const Movies = () => {
       enabled: false,
     }
   );
+  useEffect(() => {
+    if (data) {
+      if (data.cache) {
+        setCache(true);
+      } else {
+        setCache(false);
+      }
+    }
+  }, [data]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -70,14 +81,18 @@ const Movies = () => {
             </Stack>
           </Container>
         </Box>
+        {isCache !== undefined && (
+          <Button disabled>{isCache === false ? "API" : "CACHE"}</Button>
+        )}
+
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
             {isLoading ? (
               <CircularProgress />
             ) : (
-              !!data?.length &&
-              data.map((movie: any) => (
+              !!data &&
+              data.movies.results.map((movie: any) => (
                 <Grid item key={movie.id} xs={12} sm={6} md={4}>
                   <Card
                     sx={{

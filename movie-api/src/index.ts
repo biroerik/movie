@@ -19,13 +19,13 @@ app.get("/", (req: Request, res: Response) => {
 app.post("/movies", async (req: Request, res: Response) => {
   const oldRequest = cache.get(req.body.search);
   if (oldRequest) {
-    res.send(oldRequest);
+    res.send({ movies: oldRequest, cache: true });
   } else {
     const movies = await axios.get(
       `https://api.themoviedb.org/3/search/movie?api_key=${process.env.API_KEY}&language=en-US&query=${req.body.search}&page=1&include_adult=false`
     );
     cache.set(req.body.search, movies.data, 120);
-    res.send(movies.data);
+    res.send({ movies: movies.data, cache: false });
   }
 });
 
