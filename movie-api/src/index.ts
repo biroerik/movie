@@ -24,11 +24,11 @@ app.post("/movies", async (req: Request, res: Response) => {
     const movies = await axios.get(
       `https://api.themoviedb.org/3/search/movie?api_key=${process.env.API_KEY}&language=en-US&query=${req.body.search}&page=1&include_adult=false`
     );
-    if (movies.status === 200) {
-      cache.set(req.body.search, movies.data, 120);
-      res.send({ movies: movies.data, cache: false });
+    if (movies.status !== 200) {
+      res.status(500).send("Error");
     }
-    res.status(500);
+    cache.set(req.body.search, movies.data, 120);
+    res.send({ movies: movies.data, cache: false });
   }
 });
 
